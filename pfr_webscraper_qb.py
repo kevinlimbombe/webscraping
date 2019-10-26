@@ -1,10 +1,16 @@
-from bs4 import BeautifulSoup
+import csv
 import requests
+from bs4 import BeautifulSoup
 
-url = 'https://www.pro-football-reference.com/years/2018/passing.htm'
-page = requests.get(url)
-soup = BeautifulSoup(page.content, 'html.parser')
+url = "https://www.pro-football-reference.com/years/2018/passing.htm"
+soup = BeautifulSoup(requests.get(url).content, "html.parser")
 
-for row in tb.find_all('tr'):
-    i = row.get_text()
-    print(i)
+with open("output.csv", "w") as f:
+    writer = csv.writer(f)
+    writer.writerow([x.get_text() for x in soup.find("tr").find_all("th")])
+
+    for row in soup.find_all("tr"):
+        data = [x.get_text() for x in row.find_all("td")]
+
+        if data: 
+            writer.writerow(data)
